@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+{% load user_filters %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+      <div class="container py-5">
+        <h1>Все посты пользователя:
+          {% if author.get_full_name != '' %} 
+            {{ author.get_full_name }}
+          {% else %}
+            {{ author }}
+          {% endif %}
+        </h1>
+        <h3>Всего постов:
+            {{ posts_count }} 
+        </h3>
+        <hr/>
+        {% include 'posts/posts_output.html'%}
+        {% include 'includes/paginator.html' %} 
+      </div>
+{% endblock %}

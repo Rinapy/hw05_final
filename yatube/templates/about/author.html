@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container py-5"> 
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card border-success mb-3">
+        <h5 class="card-header">{{ title }}</h5>
+        <div class="card-body">
+          <p>
+            Я не знаю что конкретно я должен о себе рассказать, 
+            я работал над эти сайтом достаточно долго и получил приятный опыт. 
+            Хочу выразить свою благодарнсть команде 
+            "Yandex Praktikum" и человеку, который дал мне возможность пройти курс 
+            "Python Backend Developer", а именно Андрею Пронину. 
+            Если вы наткнульсь на этот проект в гитхабе и только собираетесь связать свою жизнь с IT сферой, 
+            сделайте это с командой Яндекса.
+          </p>
+          <div>
+            <p class="m-3">
+              Мои контакты:
+            </p>
+            <a href='https://github.com/Rinapy' class="btn btn-light border-primary  m-3">
+              <img class='m-2' src="{% static 'img/social/github.svg' %}" width="28x28">
+              GitHub
+            </a>
+            <a href='https://t.me/RinnaPy' class="btn btn-light border-primary">
+              <img class='m-2' src="{% static 'img/social/telegram.svg' %}" width="28x28">
+              Telegram
+            </a>
+            <a href='https://vk.com/lachistohelik' class="btn btn-light border-primary  m-3">
+              <img class='m-2' src="{% static 'img/social/vk.svg' %}" width="28x28">
+              VK
+            </a>
+          </div>
+        </div> <!-- card-body -->
+      </div><!-- card-border -->
+    </div><!-- col -->
+  </div><!-- row -->
+</div><!-- container -->
+{% endblock %} 

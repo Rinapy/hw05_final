@@ -1,0 +1,10 @@
+{% extends 'includes/form_output.html' %}
+{% block title %}Войти{% endblock %}
+{% block card_header_name %}Авторизация{% endblock %}
+{% block form_url %}{% url 'users:login' %}{% endblock %}
+{% block button_text %}Войти{% endblock %} 
+{% block any_objects %}
+  <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">Забыли пароль?</a>
+{%endblock%}
+           
+
