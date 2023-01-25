@@ -21,5 +21,5 @@ urlpatterns = [
          name='edit_post'
          ),
     path('posts/<int:pk>/comment/',
-         views.AddComment.as_view(), name='add_comment')
+         views.AddCommentView.as_view(), name='add_comment')
 ]

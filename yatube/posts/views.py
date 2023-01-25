@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
-from .models import Post, Group, Comment
+from .models import Post, Group, Comment, Follow
 from .forms import PostForm, CommentForm
 from .utils import paginator
 
@@ -65,7 +65,7 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     posts_count = Post.objects.filter(author=post.author).count()
     comments = post.comments.all()
-    form = AddComment
+    form = AddCommentView
     title = post.text[:30]
     context = {
         'title': title,
@@ -133,7 +133,7 @@ class PostEditView(
         return context
 
 
-class AddComment(LoginRequiredMixin, CommentForm, CreateView):
+class AddCommentView(LoginRequiredMixin, CommentForm, CreateView):
     """Выводить форму коментария."""
 
     model = Comment
@@ -146,3 +146,14 @@ class AddComment(LoginRequiredMixin, CommentForm, CreateView):
     def get_success_url(self) -> str:
         post_id = self.kwargs['pk']
         return reverse_lazy('posts:post_detail', kwargs={'post_id': post_id})
+
+class FollowIndexView(LoginRequiredMixin, CreateView):
+    
+    
+    model = Follow
+    template_name = 'posts/follow.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_obj'] = paginator(self.request, Post.following.all(), POSTS_OUTPUT_COUNT)
+        return context

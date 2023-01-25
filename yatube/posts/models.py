@@ -67,3 +67,19 @@ class Comment(models.Model):
         related_name='comments',
     )
     created = models.DateTimeField(auto_now_add=True)
+    
+class Follow(models.Model):
+    """Модель подписок."""
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Пользователь'
+    )
+
+    author = models.ManyToManyField(
+        Post.author.,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )

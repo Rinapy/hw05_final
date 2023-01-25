@@ -26,6 +26,7 @@ class TaskURLTestsPostsApp(TestCase):
         )
 
     def setUp(self):
+        cache.clear()
         self.guest_client = Client()
         self.authorized_client_author = Client()
         self.authorized_client_non_author = Client()
@@ -115,7 +116,3 @@ class TaskURLTestsPostsApp(TestCase):
         """Коментировать пост может только авторизованный пользователь."""
         response = self.guest_client.get(f'/posts/{self.post.id}/comment/')
         self.assertRedirects(response, f'/auth/login/?next=/posts/{self.post.id}/comment/')
-
-    def tearDown(self):
-        # super().tearDown()
-        cache.clear()
