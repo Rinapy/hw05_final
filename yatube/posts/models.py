@@ -79,7 +79,6 @@ class Follow(models.Model):
     )
 
     author = models.ManyToManyField(
-        Post.author.,
-        on_delete=models.CASCADE,
+        Post,
         related_name='following'
     )

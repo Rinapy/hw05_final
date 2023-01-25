@@ -21,5 +21,6 @@ urlpatterns = [
          name='edit_post'
          ),
     path('posts/<int:pk>/comment/',
-         views.AddCommentView.as_view(), name='add_comment')
+         views.AddCommentView.as_view(), name='add_comment'),
+    path('follow/', views.FollowIndexView.as_view(), name='follow')
 ]

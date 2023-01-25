@@ -147,13 +147,15 @@ class AddCommentView(LoginRequiredMixin, CommentForm, CreateView):
         post_id = self.kwargs['pk']
         return reverse_lazy('posts:post_detail', kwargs={'post_id': post_id})
 
+
 class FollowIndexView(LoginRequiredMixin, CreateView):
     
     
     model = Follow
+    fields = '__all__'
     template_name = 'posts/follow.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_obj'] = paginator(self.request, Post.following.all(), POSTS_OUTPUT_COUNT)
+        context['page_obj'] = paginator(self.request, Post.objects.filter(author_id=self.request.user)(), POSTS_OUTPUT_COUNT)
         return context
