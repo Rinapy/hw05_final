@@ -2,6 +2,7 @@
 {% block content %}
 {% load cache %}
 <div class="container py-5">
+  {% include 'posts/includes/switcher.html' %}
   <h1>{{ title }}</h1>
   <hr>
   {% cache 20 index_page %}

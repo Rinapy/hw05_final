@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load cache %}
 <div class="container py-5">
-  <h1>@</h1>
+  {% include 'posts/includes/switcher.html' %}
+  <h1>{{ title }}</h1>
   <hr>
-  {% cache 20 index_page %}
     {% include 'posts/posts_output.html' %}
-  {% endcache %} 
   {% include 'includes/paginator.html' %}
 </div><!-- container -->
 {% endblock %}
