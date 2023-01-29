@@ -14,6 +14,7 @@ from .utils import paginator
 User = get_user_model()
 POSTS_OUTPUT_COUNT: int = 10
 
+
 class IndexView(ListView):
     """Возвращает главную страницу."""
 
@@ -23,9 +24,11 @@ class IndexView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Последние обновления на сайте'
-        context['page_obj'] = paginator(self.request , self.object_list, POSTS_OUTPUT_COUNT)
+        context['page_obj'] = paginator(
+            self.request, self.object_list, POSTS_OUTPUT_COUNT)
         return context
-        
+
+
 class GroupPostsView(ListView):
     """Возвращает посты выбранной группы."""
     model = Group
@@ -37,11 +40,11 @@ class GroupPostsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_obj'] = paginator(self.request, self.object_list.posts.all(), POSTS_OUTPUT_COUNT)
+        context['page_obj'] = paginator(
+            self.request, self.object_list.posts.all(), POSTS_OUTPUT_COUNT)
         context['title'] = str(self.group)
         context['group'] = self.group
         return context
-
 
 
 def profile(request, username):
@@ -52,18 +55,18 @@ def profile(request, username):
     posts_user = Post.objects.filter(author=author)
     posts_count = Post.objects.filter(author=author).count()
     page_obj = paginator(request, posts_user, POSTS_OUTPUT_COUNT)
-    if Follow.objects.filter(user=request.user, author__username=username) == 'None':
-        following = False
-    else:
-        following = True
-
     context = {
-        'title': Follow.objects.filter(user=request.user, author__username=username) == Follow.DoesNotExist,
+        'title': title,
         'page_obj': page_obj,
         'author': author,
         'posts_count': posts_count,
-        'following': following
     }
+    if request.user.is_anonymous:
+        return render(request, template, context)
+    elif len(Follow.objects.filter(user=request.user, author__username=username)) == 0:
+        context['following'] = True
+    else:
+        context['following'] = False
     return render(request, template, context)
 
 
@@ -73,7 +76,7 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     posts_count = Post.objects.filter(author=post.author).count()
     comments = post.comments.all()
-    form = AddCommentView
+    form = CommentForm()
     title = post.text[:30]
     context = {
         'title': title,
@@ -157,28 +160,20 @@ class AddCommentView(LoginRequiredMixin, CommentForm, CreateView):
 
 
 class FollowIndexView(LoginRequiredMixin, ListView):
-    
-    
+
     model = Follow
     template_name = 'posts/follow.html'
 
-
     def get_queryset(self):
-        try:
-            self.object_list = Follow.objects.get(user_id=self.request.user)
-        except Follow.DoesNotExist:
-            self.object_list = None
-        return self.object_list
-    
+        return Post.objects.filter(author__following__user=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.object_list == None:
-            context['page_obj'] = None
-            context['title'] = 'Подпишитесь, что бы следить за последними обновлениями'
-        else:   
-            context['page_obj'] = paginator(self.request, self.object_list.author.posts.all(), POSTS_OUTPUT_COUNT)
-            context['title'] = 'Ваша лента'
+        context['page_obj'] = paginator(
+            self.request, self.object_list, POSTS_OUTPUT_COUNT)
+        context['title'] = 'Ваша лента'
         return context
+
 
 @login_required
 def follow_to_author(request, username):
@@ -189,5 +184,8 @@ def follow_to_author(request, username):
     return redirect('posts:profile', username=username)
 
 
-class UnFollowToAuthor(LoginRequiredMixin, UpdateView):
-    pass
+@login_required
+def unfollow_to_author(request, username):
+    Follow.objects.filter(
+        user=request.user, author__username=username).delete()
+    return redirect('posts:profile', username=username)

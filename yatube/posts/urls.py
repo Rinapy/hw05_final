@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         'profile/<str:username>/unfollow/',
-        views.UnFollowToAuthor.as_view(),
+        views.unfollow_to_author,
         name='profile_unfollow'
     ),
 ]

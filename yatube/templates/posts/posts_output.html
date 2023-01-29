@@ -1,5 +1,5 @@
 {% load thumbnail %}
-{% if page_obj != None%}
+{% if page_obj %}
   {% for post in page_obj %}
     <article>
       <ul>
@@ -47,6 +47,6 @@
     <div>
   {% endfor %}
 {% else %}
-      <h3>Увы :(, тут пусто.</h3>
+      <h3>Увы :( тут пусто. Подпишитесь на авторов, чтобы следить за последними обновлениями</h3>
 {% endif %}
 
