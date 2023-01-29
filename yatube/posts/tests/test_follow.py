@@ -14,7 +14,7 @@ class TestViewsPostsApp(TestCase):
     def setUpClass(self):
         super().setUpClass()
         self.user_author = User.objects.create_user(username='TestUser')
-        self.user_follower
+        self.user_follower = User.objects.create_user(username='Follower')
         self.post = Post.objects.create(
             text='Test post',
             author=self.user_author,
@@ -23,5 +23,6 @@ class TestViewsPostsApp(TestCase):
     def setUp(self):
 
         self.authorized_client_author = Client()
+        self.authorized_user_follower = Client()
         self.authorized_client_author.force_login(self.user_author)
-        cache.clear()
+        self.authorized_user_follower.force_login(self.user_follower)
