@@ -63,7 +63,9 @@ def profile(request, username):
     }
     if request.user.is_anonymous:
         return render(request, template, context)
-    elif len(Follow.objects.filter(user=request.user, author__username=username)) == 0:
+    elif len(Follow.objects.filter(
+            user=request.user,
+            author__username=username)) == 0:
         context['following'] = True
     else:
         context['following'] = False

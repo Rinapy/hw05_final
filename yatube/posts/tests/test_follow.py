@@ -51,10 +51,10 @@ class TestViewsPostsApp(TestCase):
 
         self.authorized_user_follower.get(
             f'/profile/{self.user_author.username}/follow/')
-        response = self.authorized_user_follower.get(f'/follow/')
+        response = self.authorized_user_follower.get('/follow/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['page_obj']), 1)
 
-        response = self.authorized_user_not_follower.get(f'/follow/')
+        response = self.authorized_user_not_follower.get('/follow/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['page_obj']), 0)
