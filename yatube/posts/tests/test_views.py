@@ -21,13 +21,13 @@ class TestViewsPostsApp(TestCase):
             slug='Test-group-slug',
             description='Test group description'
         )
-        self.image = (            
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+        self.image = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         self.uploaded = SimpleUploadedFile(
             name='image.png',
@@ -46,7 +46,6 @@ class TestViewsPostsApp(TestCase):
         self.authorized_client_author = Client()
         self.authorized_client_author.force_login(self.user_author)
         cache.clear()
-
 
     def test_namespace_uses_correct_template(self):
         """Namespace'ы используют коректные шаблоны."""
@@ -245,19 +244,19 @@ class PaginatorViewsTest(TestCase):
             .context['page_obj'][0]
         )
         self.assertNotEqual(response.text, self.post_test.text)
-  
+
+
 class CaheTest(TestCase):
-    
+
     @classmethod
     def setUpClass(self):
         super().setUpClass()
         self.user = User.objects.create_user(username='TestUser')
 
         self.post = Post.objects.create(
-                text='Test post 1',
-                author=self.user,
-            )
-
+            text='Test post 1',
+            author=self.user,
+        )
 
     def setUp(self):
 
@@ -271,6 +270,3 @@ class CaheTest(TestCase):
         cache.clear()
         second_cache = self.user.get(reverse('posts:index')).content
         self.assertTrue(first_cache, second_cache)
-
-
-            

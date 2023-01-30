@@ -51,9 +51,10 @@ class Group(models.Model):
     def __str__(self) -> str:
         return f'Посты группы "{self.title}"'
 
+
 class Comment(models.Model):
     """Модель комментариев."""
-    
+
     text = models.TextField(max_length=240)
     author = models.ForeignKey(
         User,
@@ -63,14 +64,15 @@ class Comment(models.Model):
     )
     post = models.ForeignKey(
         Post,
-        on_delete= models.CASCADE,
+        on_delete=models.CASCADE,
         related_name='comments',
     )
     created = models.DateTimeField(auto_now_add=True)
-    
+
+
 class Follow(models.Model):
     """Модель подписок."""
-    
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

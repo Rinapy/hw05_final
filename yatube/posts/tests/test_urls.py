@@ -96,7 +96,6 @@ class TaskURLTestsPostsApp(TestCase):
         response = self.authorized_client_author.get('/unexsisting/')
         self.assertEqual(response.status_code, 404)
 
-
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         templates_url_names = {
@@ -115,4 +114,5 @@ class TaskURLTestsPostsApp(TestCase):
     def test_url_comment_only_auth_user(self):
         """Коментировать пост может только авторизованный пользователь."""
         response = self.guest_client.get(f'/posts/{self.post.id}/comment/')
-        self.assertRedirects(response, f'/auth/login/?next=/posts/{self.post.id}/comment/')
+        self.assertRedirects(
+            response, f'/auth/login/?next=/posts/{self.post.id}/comment/')
