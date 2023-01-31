@@ -66,7 +66,7 @@ def profile(request, username):
         return render(request, template, context)
     elif Follow.objects.filter(
             user=request.user,
-            author__username=username).exists() == False:
+            author__username=username).exists() is False:
         context.update(following=False)
     else:
         context.update(following=True)
@@ -169,7 +169,8 @@ class FollowIndexView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        posts = self.get_queryset().filter(author__following__user=self.request.user)
+        posts = self.get_queryset().filter(
+            author__following__user=self.request.user)
         page_obj = paginator(
             self.request, posts, POSTS_OUTPUT_COUNT)
         context.update(
