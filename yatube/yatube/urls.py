@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve 
 
 handler404 = 'core.views.page_not_found'
 handler403 = 'core.views.csrf_failure'
@@ -29,5 +30,5 @@ urlpatterns = [
     path('auth/', include('users.urls', namespace='users')),
     # Перенаправляет веб запросы на ursl.py приложения about
     path('about/', include('about.urls', namespace='about')),
-    path('', include('django.contrib.auth.urls')),
+    path('', include('django.contrib.auth.urls')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

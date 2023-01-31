@@ -23,9 +23,12 @@ class IndexView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Последние обновления на сайте'
-        context['page_obj'] = paginator(
+        page_obj = paginator(
             self.request, self.object_list, POSTS_OUTPUT_COUNT)
+        context.update(
+            title='Последние обновления на сайте',
+            page_obj=page_obj,
+        )
         return context
 
 
@@ -34,41 +37,39 @@ class GroupPostsView(ListView):
     model = Group
     template_name = 'posts/group_list.html'
 
-    def get_queryset(self):
-        self.group = Group.objects.get(slug=self.kwargs['slug'])
-        return self.group
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_obj'] = paginator(
-            self.request, self.object_list.posts.all(), POSTS_OUTPUT_COUNT)
-        context['title'] = str(self.group)
-        context['group'] = self.group
+        group = self.get_queryset().get(slug=self.kwargs['slug'])
+        page_obj = paginator(
+            self.request, group.posts.all(), POSTS_OUTPUT_COUNT)
+        context.update(
+            title=str(group),
+            group=group,
+            page_obj=page_obj
+        )
         return context
 
 
 def profile(request, username):
     """Выводит профайл пользователя."""
     template = 'posts/profile.html'
-    title = f'Профайл пользователя {username}'
     author = get_object_or_404(User, username=username)
     posts_user = Post.objects.filter(author=author)
-    posts_count = Post.objects.filter(author=author).count()
-    page_obj = paginator(request, posts_user, POSTS_OUTPUT_COUNT)
     context = {
-        'title': title,
-        'page_obj': page_obj,
+        'title': f'Профайл пользователя {username}',
+        'page_obj': paginator(request, posts_user, POSTS_OUTPUT_COUNT),
         'author': author,
-        'posts_count': posts_count,
+        'posts_count': posts_user.count(),
+        'follower_count': author.following.count(),
     }
     if request.user.is_anonymous:
         return render(request, template, context)
-    elif len(Follow.objects.filter(
+    elif Follow.objects.filter(
             user=request.user,
-            author__username=username)) == 0:
-        context['following'] = True
+            author__username=username).exists() == False:
+        context.update(following=False)
     else:
-        context['following'] = False
+        context.update(following=True)
     return render(request, template, context)
 
 
@@ -76,29 +77,25 @@ def post_detail(request, post_id):
     """Выводит пост и информацию о нём по ID."""
     template = 'posts/post_detail.html'
     post = get_object_or_404(Post, pk=post_id)
-    posts_count = Post.objects.filter(author=post.author).count()
-    comments = post.comments.all()
-    form = CommentForm()
-    title = post.text[:30]
     context = {
-        'title': title,
+        'title': post.text[:30],
         'post': post,
-        'posts_count': posts_count,
-        'comments': comments,
-        'form': form,
+        'posts_count': post.author.posts.count(),
+        'comments': post.comments.all(),
+        'form': CommentForm(),
         'comments_count': post.comments.count()
     }
     return render(request, template, context)
 
 
-class PostViweMixin:
+class PostViewMixin:
     """Примись для классов редактирования и создания поста."""
 
     template_name = 'posts/create_post.html'
     form_class = PostForm
 
 
-class PostCreateView(LoginRequiredMixin, PostViweMixin, CreateView):
+class PostCreateView(LoginRequiredMixin, PostViewMixin, CreateView):
     """Выводит страницу создания поста."""
 
     def form_valid(self, form):
@@ -111,9 +108,11 @@ class PostCreateView(LoginRequiredMixin, PostViweMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Добавить запись'
-        context['card_header_name'] = 'Новый пост'
-        context['button_text'] = 'Добавить'
+        context.update(
+            title='Добавить запись',
+            card_header_name='Новый пост',
+            button_text='Добавить',
+        )
         return context
 
 
@@ -140,9 +139,11 @@ class PostEditView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Редактировать запись'
-        context['card_header_name'] = 'Редактировать пост'
-        context['button_text'] = 'Сохранить'
+        context.update(
+            title='Редактировать запись',
+            card_header_name='Редактировать пост',
+            button_text='Сохранить',
+        )
         return context
 
 
@@ -163,17 +164,18 @@ class AddCommentView(LoginRequiredMixin, CommentForm, CreateView):
 
 class FollowIndexView(LoginRequiredMixin, ListView):
 
-    model = Follow
+    model = Post
     template_name = 'posts/follow.html'
-
-    def get_queryset(self):
-        return Post.objects.filter(author__following__user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_obj'] = paginator(
-            self.request, self.object_list, POSTS_OUTPUT_COUNT)
-        context['title'] = 'Ваша лента'
+        posts = self.get_queryset().filter(author__following__user=self.request.user)
+        page_obj = paginator(
+            self.request, posts, POSTS_OUTPUT_COUNT)
+        context.update(
+            page_obj=page_obj,
+            title='Ваша лента'
+        )
         return context
 
 
