@@ -62,14 +62,10 @@ def profile(request, username):
         'posts_count': posts_user.count(),
         'follower_count': author.following.count(),
     }
-    if request.user.is_anonymous:
-        return render(request, template, context)
-    elif Follow.objects.filter(
-            user=request.user,
-            author__username=username).exists() is False:
-        context.update(following=False)
-    else:
-        context.update(following=True)
+    if request.user.is_authenticated:
+        following = request.user.follower.filter(
+            author__username=username).exists()
+        context.update(following=following)
     return render(request, template, context)
 
 

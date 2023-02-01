@@ -6,7 +6,7 @@
   <h1>{{ title }}</h1>
   <hr>
   {% cache 20 index_page %}
-    {% include 'posts/posts_output.html' %}
+    {% include 'posts/includes/posts_output.html' %}
   {% endcache %}
   {% include 'includes/paginator.html' %}
 </div><!-- container -->
