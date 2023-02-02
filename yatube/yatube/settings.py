@@ -27,10 +27,8 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-    'testserver',
+    'www.Rinna.pythonanywhere.com',
+    'Rinna.pythonanywhere.com',
 ]
 
 
