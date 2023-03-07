@@ -28,8 +28,7 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = [
-    'www.Rinna.pythonanywhere.com',
-    'Rinna.pythonanywhere.com',
+
 ]
 
 
